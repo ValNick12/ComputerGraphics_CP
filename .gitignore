@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# Keep the .gitignore file itself
+!.gitignore
+
+# Keep only these four Python files
+!geometric_transformations.py
+!main.py
+!shaders.py
+!vertices.py
