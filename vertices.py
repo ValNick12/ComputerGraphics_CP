@@ -1,12 +1,12 @@
 # Main rotor base vertices
-main_rotor_base = [
-    -0.3, -0.005,
-     0.3, -0.005,
-     0.3,  0.005,
+main_prop_vertices = [
+    -0.3, -0.003,
+     0.3, -0.003,
+     0.3,  0.003,
 
-    -0.3, -0.005,
-     0.3,  0.005,
-    -0.3,  0.005
+    -0.3, -0.003,
+     0.3,  0.003,
+    -0.3,  0.003
 ]
 
 # Rear blade vertices
@@ -51,7 +51,7 @@ heli_vertices = [
     -0.10, -0.10,   # down right
     -0.10,  0.00,   # up right
     
-    # Rotor
+    # Main Rotor
      0.03,  0.10,   # down left
      0.05,  0.10,   # down right
      0.05,  0.13,   # up right

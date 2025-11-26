@@ -1,6 +1,5 @@
 import math
 
-# Circle making function
 def make_circle_vertices(cx, cy, radius, segments=40):
     vertices = []
 
@@ -38,5 +37,22 @@ def rotate_and_translate(vertices, cx, cy, angle):
         # Move (translate) to rotor center
         out.append(xr + cx)
         out.append(yr + cy)
+
+    return out
+
+def scale_translate_x_vertices(vertices, cx, cy, scale):
+    out = []
+    for i in range(0, len(vertices), 2):
+        x = vertices[i]
+        y = vertices[i+1]
+
+        # Scale around cx and move to cx
+        new_x = x * scale + cx
+
+        # Move to cy
+        new_y = y + cy
+
+        out.append(new_x)
+        out.append(new_y)
 
     return out
