@@ -4,30 +4,22 @@ from geometric_transformations import *
 from OpenGL.GL import *
 from shaders import create_shader_program
 
-vertex_shader_source = """
+vertex_solid_shader_source = """
 #version 330 core
 
 layout (location = 0) in vec2 aPos;
-layout (location = 1) in vec2 aTex;
-
-out vec2 TexCoord;
 
 void main() {
     gl_Position = vec4(aPos, 0.0, 1.0);
-    TexCoord = aTex;
 }
 """
-fragment_shader_source = """
+fragment_solid_shader_source = """
 #version 330 core
 
-in vec2 TexCoord;
 out vec4 FragColor;
 
-uniform sampler2D ourTexture;
-
-void main()
-{
-    FragColor = texture(ourTexture, TexCoord);
+void main() {
+    FragColor = vec4(0.2, 0.8, 0.3, 1.0); // any color you want
 }
 """
 
@@ -43,7 +35,7 @@ def main():
     glfw.make_context_current(window)
     
     # Shaders
-    shader = create_shader_program(vertex_shader_source, fragment_shader_source)
+    shader = create_shader_program(vertex_solid_shader_source, fragment_solid_shader_source)
 
     vertices = heli_vertices + make_circle_vertices(-0.15, -0.038, 0.062, 40)
     vertices = (GLfloat * len(vertices))(*vertices)
@@ -74,7 +66,7 @@ def main():
     
     # Main loop
     while not glfw.window_should_close(window):
-        glClearColor(0.3, 0.3, 0.3, 1)
+        glClearColor(0.1, 0.1, 0.1, 1)
         glClear(GL_COLOR_BUFFER_BIT)
         glUseProgram(shader)
         glBindVertexArray(VAO)
