@@ -39,8 +39,8 @@ void main() {
 vertex_textured_shader_source = """
 #version 330 core
 
-layout (location = 0) in vec2 aPos;
-layout (location = 1) in vec2 aTex;
+layout(location = 0) in vec2 aPos;
+layout(location = 1) in vec2 aTex;
 
 out vec2 TexCoord;
 
@@ -66,10 +66,10 @@ fragment_textured_shader_source = """
 in vec2 TexCoord;
 out vec4 FragColor;
 
-uniform sampler2D texture1;
+uniform sampler2D tex;
 
 void main()
 {
-    FragColor = texture(texture1, TexCoord);
+    FragColor = texture(tex, TexCoord);
 }
 """

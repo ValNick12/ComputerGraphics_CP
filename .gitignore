@@ -5,7 +5,9 @@
 !.gitignore
 
 # Keep only these four Python files
-!geometric_transformations.py
+!heli_triangles.png
+!window.jpg
+!helpers.py
 !main.py
 !shaders.py
 !vertices.py

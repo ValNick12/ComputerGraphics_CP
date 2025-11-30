@@ -1,5 +1,7 @@
 import math
 
+#----------------- Geometric Transformations -----------------
+
 def make_circle_vertices(cx, cy, radius, segments=40):
     vertices = []
 
@@ -56,3 +58,4 @@ def scale_translate_x_vertices(vertices, cx, cy, scale):
         out.append(new_y)
 
     return out
+

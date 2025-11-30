@@ -1,30 +1,9 @@
 import glfw
-from vertices import heli_vertices, rear_blade_vertices, main_prop_vertices
-from geometric_transformations import *
+from PIL import Image
+from vertices import heli_vertices, rear_blade_vertices, main_prop_vertices, textured_vertices
+from helpers import *
 from OpenGL.GL import *
 from shaders import *
-
-
-# ----------------- Helper to create a single VAO/VBO pair -----------------
-def create_buffer():
-    vao = glGenVertexArrays(1)
-    vbo = glGenBuffers(1)
-    return {"vao": vao, "vbo": vbo}
-
-
-def upload_vertices(buffer, data, usage=GL_STATIC_DRAW):
-    glBindVertexArray(buffer["vao"])
-    glBindBuffer(GL_ARRAY_BUFFER, buffer["vbo"])
-
-    data_gl = (GLfloat * len(data))(*data)
-    glBufferData(GL_ARRAY_BUFFER, len(data) * 4, data_gl, usage)
-
-    glEnableVertexAttribArray(0)
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, None)
-
-
-# -------------------------------------------------------------------------
-
 
 def main():
 
@@ -38,8 +17,10 @@ def main():
         raise Exception("Failed to create GLFW window")
     glfw.make_context_current(window)
     
-    # Shaders
+    # Shaders and Textures
     shader = create_shader_program(vertex_solid_shader_source, fragment_solid_shader_source)
+    textured_shader = create_shader_program(vertex_textured_shader_source, fragment_textured_shader_source)
+    window_texture = load_texture("window.jpg")
 
     # ------------------ STATIC HELICOPTER BODY ------------------
     body_vertices = heli_vertices + make_circle_vertices(-0.15, -0.038, 0.062, 40)
@@ -58,11 +39,16 @@ def main():
     tail_cy = 0.13
 
     back_prop_angle = 0.0
+    
+    # ------------------ TEXTURED PARTS BUFFERS --------------------
+    textured_body_buffer = create_buffer()
+    upload_textured_vertices(textured_body_buffer, textured_vertices, GL_STATIC_DRAW)
 
     # ----------------------------- MAIN LOOP -----------------------------
     while not glfw.window_should_close(window):
         glClearColor(0.1, 0.1, 0.1, 1)
         glClear(GL_COLOR_BUFFER_BIT)
+
         glUseProgram(shader)
 
         # Draw static body
@@ -90,6 +76,16 @@ def main():
         glBindVertexArray(main_prop_buffer["vao"])
         glDrawArrays(GL_TRIANGLES, 0, len(main_rotor_vertices)//2)
 
+        # ------------------ DRAW TEXTURED TRIANGLES ------------------
+        glUseProgram(textured_shader)
+
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, window_texture)
+        glUniform1i(glGetUniformLocation(textured_shader, "tex"), 0)
+
+        glBindVertexArray(textured_body_buffer["vao"])
+        glDrawArrays(GL_TRIANGLES, 0, len(textured_vertices)//4)
+
         # -----------------------------------------------------------------
 
         glfw.swap_buffers(window)
@@ -97,6 +93,53 @@ def main():
         
     glfw.terminate()
 
+# ----------------- Helper for VAO & VBO -----------------
+def create_buffer():
+    vao = glGenVertexArrays(1)
+    vbo = glGenBuffers(1)
+    return {"vao": vao, "vbo": vbo}
+
+def upload_vertices(buffer, data, usage=GL_STATIC_DRAW):
+    glBindVertexArray(buffer["vao"])
+    glBindBuffer(GL_ARRAY_BUFFER, buffer["vbo"])
+
+    data_gl = (GLfloat * len(data))(*data)
+    glBufferData(GL_ARRAY_BUFFER, len(data) * 4, data_gl, usage)
+
+    glEnableVertexAttribArray(0)
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, None)
+
+def upload_textured_vertices(buffer, data, usage=GL_STATIC_DRAW):
+    glBindVertexArray(buffer["vao"])
+    glBindBuffer(GL_ARRAY_BUFFER, buffer["vbo"])
+
+    data_gl = (GLfloat * len(data))(*data)
+    glBufferData(GL_ARRAY_BUFFER, len(data) * 4, data_gl, usage)
+
+    stride = 4 * 4  # (x, y, u, v)
+
+    glEnableVertexAttribArray(0)
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(0))
+
+    glEnableVertexAttribArray(1)
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(8))
+
+def load_texture(path):
+    img = Image.open(path).transpose(Image.FLIP_TOP_BOTTOM)
+    img_data = img.convert("RGBA").tobytes()
+    width, height = img.size
+
+    tex = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, tex)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data)
+
+    return tex
 
 if __name__ == "__main__":
     main()
