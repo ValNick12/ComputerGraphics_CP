@@ -43,7 +43,7 @@ heli_vertices = [
      0.20,  0.02,   # up right
         
     # Nose
-    -0.10,  0.10,   # up  left
+    -0.10,  0.10,   # up  right
     -0.20,  0.00,   # down left
     -0.10,  0.00,   # down right
         
@@ -91,8 +91,12 @@ heli_vertices = [
 
 textured_vertices = [
     # x,    y,      u, v
-    # Nose
-    -0.10,  0.10,  0.5,  1.0,  # top
+    # Front window
+    -0.10,  0.10,  0.0,  1.0,  # top
     -0.20,  0.00,  0.0,  0.0,  # bottom left
-    -0.10,  0.00,  1.0,  0.0,  # bottom right
+    -0.10, -0.02,  1.0,  0.0,  # bottom right
+
+    -0.10,  0.10,  0.0,  1.0,  # top
+    -0.10, -0.02,  1.0,  0.0,  # bottom left
+    -0.03,  0.08,  1.0,  0.0,  # bottom right
 ]
